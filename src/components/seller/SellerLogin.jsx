@@ -9,7 +9,7 @@ const SellerLogin = () => {
     if (isSeller) {
       navigate("/seller");
     }
-  }, [isSeller]);
+  }, [isSeller, navigate]);
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
