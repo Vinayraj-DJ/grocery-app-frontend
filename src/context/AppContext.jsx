@@ -1,10 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { dummyProducts } from "../assets/assets";
 import toast from "react-hot-toast";
 import axios from "axios";
+// import axios from "../utils/api"; // ✅ now imported cleanly
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
+// eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext(null);
 
 export const AppContextProvider = ({ children }) => {
@@ -26,6 +27,7 @@ export const AppContextProvider = ({ children }) => {
         setIsSeller(false);
       }
     } catch (error) {
+      console.log(error);
       setIsSeller(false);
     }
   };
