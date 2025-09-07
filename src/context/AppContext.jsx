@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import{dummyProducts} from "../assets/assets"
 import toast from "react-hot-toast";
 import axios from "axios";
 // import axios from "../utils/api"; // ✅ now imported cleanly
@@ -137,6 +138,7 @@ export const AppContextProvider = ({ children }) => {
       updateCart();
     }
   }, [cartItems]);
+
   const value = {
     navigate,
     user,
@@ -160,6 +162,7 @@ export const AppContextProvider = ({ children }) => {
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
+
 
 export const useAppContext = () => {
   return useContext(AppContext);
