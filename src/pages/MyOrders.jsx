@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { AppContext } from "../context/appContext"; // make sure the file path is correct
+import { AppContext } from "../context/AppContext"; // make sure the file path is correct
 import toast from "react-hot-toast";
 
 const MyOrders = () => {

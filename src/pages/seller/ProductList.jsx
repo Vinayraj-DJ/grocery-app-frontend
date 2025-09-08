@@ -80,7 +80,7 @@
 
 
 import toast from "react-hot-toast";
-import { useAppContext } from "../../context/appContext";
+import { useAppContext } from "../../context/AppContext";
 
 const ProductList = () => {
   const { products, fetchProducts, axios } = useAppContext();
