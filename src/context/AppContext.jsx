@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 // import axios from "../utils/api"; // ✅ now imported cleanly
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL  ;
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000" ;
 //eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext(null);
 
