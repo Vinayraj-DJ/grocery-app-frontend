@@ -697,7 +697,7 @@ import axios from "axios";
 
 // ✅ Use only deployed backend URL from .env
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL; // your backend URL
-axios.defaults.withCredentials = true; // ensure cookies are sent
+axios.defaults.withCredentials = true; // send cookies if backend uses sessions
 
 export const AppContext = createContext(null);
 
@@ -710,7 +710,7 @@ export const AppContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
 
-  // ✅ Utility for showing errors
+  // ===================== Error handler =====================
   const handleError = (error) => {
     if (error.response?.data?.message) {
       toast.error(error.response.data.message);
@@ -719,7 +719,7 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-  // ===================== LOGIN FUNCTION =====================
+  // ===================== LOGIN =====================
   const loginUser = async (email, password) => {
     try {
       const { data } = await axios.post("/api/user/login", { email, password });
@@ -755,8 +755,6 @@ export const AppContextProvider = ({ children }) => {
       if (data.success) {
         setUser(data.user);
         setCartItems(data.user?.cart || {});
-      } else {
-        toast.error(data.message);
       }
     } catch (error) {
       handleError(error);
@@ -769,6 +767,31 @@ export const AppContextProvider = ({ children }) => {
       const { data } = await axios.get("/api/product/list");
       if (data.success) {
         setProducts(data.products);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  // ===================== ADD PRODUCT =====================
+  const addProduct = async (productData) => {
+    try {
+      if (!user) {
+        toast.error("Please login first!");
+        return;
+      }
+
+      const { data } = await axios.post("/api/product/add", productData, {
+        headers: {
+          Authorization: `Bearer ${user.token}` // only if backend uses JWT
+        }
+      });
+
+      if (data.success) {
+        toast.success("Product added successfully!");
+        fetchProducts(); // refresh product list
       } else {
         toast.error(data.message);
       }
@@ -853,7 +876,8 @@ export const AppContextProvider = ({ children }) => {
     axios,
     fetchProducts,
     setCartItems,
-    loginUser, // ✅ added login function
+    loginUser, // login function
+    addProduct, // add product function
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
