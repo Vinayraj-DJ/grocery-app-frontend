@@ -696,7 +696,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 // ✅ Use only deployed backend URL from .env
-axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL; // your backend URL
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 axios.defaults.withCredentials = true; // send cookies if backend uses sessions
 
 export const AppContext = createContext(null);
@@ -719,16 +719,47 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-  // ===================== LOGIN =====================
+  // ===================== USER LOGIN =====================
   const loginUser = async (email, password) => {
     try {
       const { data } = await axios.post("/api/user/login", { email, password });
-
       if (data.success) {
-        setUser(data.user); // store logged-in user
-        setCartItems(data.user?.cart || {}); // sync cart
+        setUser(data.user);
+        setCartItems(data.user?.cart || {});
         toast.success("Login successful!");
-        navigate("/"); // redirect to home page
+        navigate("/");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  // ===================== SELLER LOGIN =====================
+  const loginSeller = async (email, password) => {
+    try {
+      const { data } = await axios.post("/api/seller/login", { email, password });
+      if (data.success) {
+        toast.success("Seller login successful!");
+        setIsSeller(true);
+        navigate("/seller/dashboard"); // change route as needed
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  // ===================== SELLER LOGOUT =====================
+  const logoutSeller = async () => {
+    try {
+      const { data } = await axios.post("/api/seller/logout");
+      if (data.success) {
+        setIsSeller(false);
+        toast.success("Logged out successfully!");
+        navigate("/"); // redirect after logout
       } else {
         toast.error(data.message);
       }
@@ -778,20 +809,15 @@ export const AppContextProvider = ({ children }) => {
   // ===================== ADD PRODUCT =====================
   const addProduct = async (productData) => {
     try {
-      if (!user) {
-        toast.error("Please login first!");
+      if (!isSeller) {
+        toast.error("Please login as seller first!");
         return;
       }
 
-      const { data } = await axios.post("/api/product/add", productData, {
-        headers: {
-          Authorization: `Bearer ${user.token}` // only if backend uses JWT
-        }
-      });
-
+      const { data } = await axios.post("/api/product/add", productData);
       if (data.success) {
         toast.success("Product added successfully!");
-        fetchProducts(); // refresh product list
+        fetchProducts();
       } else {
         toast.error(data.message);
       }
@@ -876,8 +902,10 @@ export const AppContextProvider = ({ children }) => {
     axios,
     fetchProducts,
     setCartItems,
-    loginUser, // login function
-    addProduct, // add product function
+    loginUser,
+    loginSeller,
+    logoutSeller,
+    addProduct,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
