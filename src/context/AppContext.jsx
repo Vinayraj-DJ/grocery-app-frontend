@@ -753,20 +753,41 @@ export const AppContextProvider = ({ children }) => {
   };
 
   // ===================== SELLER LOGOUT =====================
+  // const logoutSeller = async () => {
+  //   try {
+  //     const { data } = await axios.post("/api/seller/logout");
+  //     if (data.success) {
+  //       setIsSeller(false);
+  //       toast.success("Logged out successfully!");
+  //       navigate("/"); // redirect after logout
+  //     } else {
+  //       toast.error(data.message);
+  //     }
+  //   } catch (error) {
+  //     handleError(error);
+  //   }
+  // };
+
   const logoutSeller = async () => {
-    try {
-      const { data } = await axios.post("/api/seller/logout");
-      if (data.success) {
-        setIsSeller(false);
-        toast.success("Logged out successfully!");
-        navigate("/"); // redirect after logout
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      handleError(error);
+  try {
+    const { data } = await axios.post(
+      "/api/seller/logout",
+      {}, // body is empty
+      { withCredentials: true } // ✅ include cookies
+    );
+
+    if (data.success) {
+      setIsSeller(false);
+      toast.success("Logged out successfully!");
+      navigate("/"); // redirect after logout
+    } else {
+      toast.error(data.message);
     }
-  };
+  } catch (error) {
+    handleError(error);
+  }
+};
+
 
   // ===================== Check seller auth =====================
   const fetchSeller = async () => {
